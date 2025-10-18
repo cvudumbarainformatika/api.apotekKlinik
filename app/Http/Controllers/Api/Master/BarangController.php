@@ -23,8 +23,10 @@ class BarangController extends Controller
         ];
         $raw = Barang::query();
         $raw->when(request('q'), function ($q) {
-            $q->where('nama', 'like', '%' . request('q') . '%')
-                ->orWhere('kode', 'like', '%' . request('q') . '%');
+            $q->where(function ($y) {
+                $y->where('nama', 'like', '%' . request('q') . '%')
+                    ->orWhere('kode', 'like', '%' . request('q') . '%');
+            });
         })
             ->whereNull('hidden')
             ->orderBy($req['order_by'], $req['sort']);
@@ -39,14 +41,18 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $kode = $request->kode;
+        $request->merge([
+            'harga_jual_resep_k' => $request->input('harga_jual_resep_k', 0) ?? 0,
+            'harga_jual_biasa_k' => $request->input('harga_jual_biasa_k', 0) ?? 0,
+        ]);
         $validated = $request->validate([
             'nama' => 'required',
             'satuan_k' => 'nullable',
             'satuan_b' => 'nullable',
             'isi' => 'nullable',
             'kandungan' => 'nullable',
-            'harga_jual_resep_k' => 'nullable',
-            'harga_jual_biasa_k' => 'nullable',
+            'harga_jual_resep_k' => 'nullable|numeric',
+            'harga_jual_biasa_k' => 'nullable|numeric',
             'persen_biasa' => 'nullable',
             'persen_resep' => 'nullable',
         ], [

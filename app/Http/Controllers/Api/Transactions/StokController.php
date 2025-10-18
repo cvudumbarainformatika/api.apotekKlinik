@@ -122,15 +122,19 @@ class StokController extends Controller
         // ]);
         $raw = Barang::query();
         $raw->when(request('q'), function ($q) {
-            $q->where('nama', 'like', '%' . request('q') . '%')
-                ->orWhere('kode', 'like', '%' . request('q') . '%');
+            $q->where(function ($y) {
+                $y->where('nama', 'like', '%' . request('q') . '%')
+                    ->orWhere('kode', 'like', '%' . request('q') . '%');
+            });
         })
             ->with([
                 'stokAwal' => function ($q) use ($lastMonth) {
-                    $q->select(
-                        'kode_barang',
-                        DB::raw('sum(jumlah_k) as jumlah_k'),
-                    )
+                    $q
+                        ->select(
+                            'kode_barang',
+                            DB::raw('sum(jumlah_k) as jumlah_k'),
+
+                        )
                         ->where('jumlah_k', '>', 0)
                         ->whereDate('tgl_opname', $lastMonth)
                         ->groupBy('kode_barang');
@@ -197,6 +201,7 @@ class StokController extends Controller
         $totalCount = (clone $raw)->count();
         $data = $raw->simplePaginate($req['per_page']);
         $resp = ResponseHelper::responseGetSimplePaginate($data, $req, $totalCount);
+        $resp['req'] = request()->all();
         return new JsonResponse($resp);
     }
     public function kartuStokRinci()
@@ -231,17 +236,21 @@ class StokController extends Controller
                     $q->select(
                         'penjualan_r_s.kode_barang',
                         'penjualan_r_s.jumlah_k',
+                        'penjualan_r_s.harga_beli',
                         'penjualan_h_s.tgl_penjualan',
                         'penjualan_h_s.nopenjualan',
+                        'penjualan_h_s.kode_pelanggan',
                     )
                         ->leftJoin('penjualan_h_s', 'penjualan_h_s.nopenjualan', '=', 'penjualan_r_s.nopenjualan')
                         ->whereBetween('penjualan_h_s.tgl_penjualan', [$awalBulan, $akhirBulan])
-                        ->whereNotNull('penjualan_h_s.flag');
+                        ->whereNotNull('penjualan_h_s.flag')
+                        ->with(['pelanggan:kode,nama']);
                 },
                 'returPenjualanRinci' => function ($q) use ($awalBulan, $akhirBulan) {
                     $q->select(
                         'retur_penjualan_rs.kode_barang',
                         'retur_penjualan_rs.jumlah_k',
+                        'retur_penjualan_rs.harga_beli',
                         'retur_penjualan_hs.tgl_retur',
                         'retur_penjualan_hs.noretur',
                     )
@@ -253,16 +262,20 @@ class StokController extends Controller
                     $q->select(
                         'penerimaan_rs.kode_barang',
                         'penerimaan_rs.jumlah_k',
+                        'penerimaan_rs.harga_total as harga_beli',
                         'penerimaan_hs.nopenerimaan',
                         'penerimaan_hs.tgl_penerimaan',
+                        'penerimaan_hs.kode_suplier',
                     )
                         ->leftJoin('penerimaan_hs', 'penerimaan_hs.nopenerimaan', '=', 'penerimaan_rs.nopenerimaan')
                         ->whereBetween('penerimaan_hs.tgl_penerimaan', [$awalBulan, $akhirBulan])
-                        ->whereNotNull('penerimaan_hs.flag');
+                        ->whereNotNull('penerimaan_hs.flag')
+                        ->with('suplier:kode,nama');
                 },
                 'ReturPembelianRinci' => function ($q) use ($awalBulan, $akhirBulan) {
                     $q->select(
                         'retur_pembelian_rs.kode_barang',
+                        'retur_pembelian_rs.harga_total as harga_beli',
                         'retur_pembelian_rs.jumlahretur_k as jumlah_k',
                         'retur_pembelian_hs.noretur',
                         'retur_pembelian_hs.tglretur',

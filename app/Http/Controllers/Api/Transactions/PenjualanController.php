@@ -25,15 +25,18 @@ class PenjualanController extends Controller
             'order_by' => request('order_by') ?? 'nama',
             'sort' => request('sort') ?? 'asc',
             'page' => request('page') ?? 1,
-            'per_page' => request('per_page') ?? 10,
+            'per_page' => request('per_page') ?? 30,
         ];
         $limitHargaTertinggi = 5;
 
         // tambah penjualan yang belum selesai -- ibarat alokasi... maping di front
-        $data = Barang::when(request('q'), function ($q) {
-            $q->where('nama', 'like', '%' . request('q') . '%')
-                ->orWhere('kode', 'like', '%' . request('q') . '%');
-        })
+        $data = Barang::select('barangs.*')
+            ->when(request('q'), function ($q) {
+                $q->where(function ($y) {
+                    $y->where('nama', 'like', '%' . request('q') . '%')
+                        ->orWhere('kode', 'like', '%' . request('q') . '%');
+                });
+            })
             ->with([
                 'stok' => function ($q) {
                     $q->where('jumlah_k', '>', 0);
@@ -60,8 +63,12 @@ class PenjualanController extends Controller
             ")
                     ->whereColumn('stoks.kode_barang', '=', 'barangs.kode')
             ])
+            ->leftJoin('stoks', 'stoks.kode_barang', '=', 'barangs.kode')
+            ->where('jumlah_k', '>', 0)
+            ->groupBy('barangs.kode')
             ->orderBy($req['order_by'], $req['sort'])
             ->limit($req['per_page'])
+            ->whereNull('hidden')
             ->get();
 
         $stokIds = $data->pluck('harga_tertinggi_ids')
@@ -103,8 +110,7 @@ class PenjualanController extends Controller
 
         $raw = PenjualanH::query();
         $raw->when(request('q'), function ($q) {
-            $q->where('nama', 'like', '%' . request('q') . '%')
-                ->orWhere('kode', 'like', '%' . request('q') . '%');
+            $q->where('nopenjualan', 'like', '%' . request('q') . '%');
         })
             ->when($req['from'], function ($q) use ($req) {
                 $q->whereBetween('tgl_penjualan', [$req['from'] . ' 00:00:00', $req['to'] . ' 23:59:59']);
@@ -124,6 +130,7 @@ class PenjualanController extends Controller
     public function simpan(Request $request): JsonResponse
     {
         $nomorPen = $request->nopenjualan;
+
         $validated = $request->validate([
 
             'tgl_penjualan' => 'nullable',
@@ -135,6 +142,7 @@ class PenjualanController extends Controller
             'satuan_k' => 'nullable',
             'satuan_b' => 'nullable',
             'isi' => 'required',
+            'diskon' => 'nullable',
             'harga_jual' => 'required', // ini dari master
             'harga_beli' => 'required', // ini dari master
             'hpp' => 'required', // ini di taruh di master, hasil query dari 5 harga terakhir
@@ -166,9 +174,11 @@ class PenjualanController extends Controller
                 $nopenjualan = FormatingHelper::genKodeBarang($nomor->nopenjualan, 'TRX');
             } else {
                 $nopenjualan = $request->nopenjualan;
+                $penj = PenjualanH::where('nopenjualan', $nopenjualan)->whereNotNull('flag')->first();
+                if ($penj) throw new Exception('Penjualan sudah dibayar');
             }
             $jumlahB = floor($validated['jumlah_k'] / $validated['isi']);
-            $subtotal = $validated['jumlah_k'] * $validated['harga_jual'];
+            $subtotal = ($validated['jumlah_k'] * $validated['harga_jual']) - ($validated['diskon'] ?? 0);
             $data = PenjualanH::updateOrCreate([
                 'nopenjualan' => $nopenjualan
             ], [
@@ -176,7 +186,7 @@ class PenjualanController extends Controller
                 'kode_pelanggan' => $validated['kode_pelanggan'],
                 'kode_dokter' => $validated['kode_dokter'],
                 'kode_user' => $user->kode,
-                'cara_bayar' => '',
+                // 'cara_bayar' => '',
             ]);
             if (!$data) {
                 throw new \Exception('Data Penjualan Gagal Disimpan.');
@@ -198,6 +208,7 @@ class PenjualanController extends Controller
                 'harga_jual' => $validated['harga_jual'],
                 'harga_beli' => $validated['harga_beli'],
                 'hpp' => $validated['hpp'] ?? 0,
+                'diskon' => $validated['diskon'] ?? 0,
                 'subtotal' => $subtotal,
                 'kode_user' => $user->kode,
             ]);
@@ -248,13 +259,14 @@ class PenjualanController extends Controller
 
             // hitung Subtotal
             $subtotal = PenjualanR::where('nopenjualan', $data->nopenjualan)->sum('subtotal');
+            $diskon = PenjualanR::where('nopenjualan', $data->nopenjualan)->sum('diskon');
 
-            $diskon = $validated['diskon'] ?? 0;
             $kembali = $validated['kembali'] ?? 0;
             $jumlahBayar = $validated['jumlah_bayar'] ?? 0;
             // tentkan jumlah pembayran jika ada diskon dan tidak
-            if ($diskon > 0) $nilaiBayar = (int)$subtotal - (int)$diskon;
-            else $nilaiBayar = (int)$subtotal;
+            // if ($diskon > 0) $nilaiBayar = (int)$subtotal - (int)$diskon;
+            // else $nilaiBayar = (int)$subtotal;
+            $nilaiBayar = (int)$subtotal;
             // validasi jumlah pembayaran
             if ((int)$jumlahBayar < (int)$nilaiBayar) {
                 throw new Exception('Jumlah Pembayaran kurang, minimal ' . $nilaiBayar);
