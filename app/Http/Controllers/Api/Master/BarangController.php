@@ -28,6 +28,9 @@ class BarangController extends Controller
                     ->orWhere('kode', 'like', '%' . request('q') . '%');
             });
         })
+            ->when(request('kode_kategory'), function ($q) {
+                $q->where('kode_kategori', request('kode_kategori'));
+            })
             ->whereNull('hidden')
             ->orderBy($req['order_by'], $req['sort']);
         $totalCount = (clone $raw)->count();
@@ -55,6 +58,7 @@ class BarangController extends Controller
             'harga_jual_biasa_k' => 'nullable|numeric',
             'persen_biasa' => 'nullable',
             'persen_resep' => 'nullable',
+            'kode_kategori' => 'nullable',
         ], [
             'nama.required' => 'Nama wajib diisi.'
         ]);
