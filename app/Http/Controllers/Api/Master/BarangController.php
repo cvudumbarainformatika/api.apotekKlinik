@@ -28,7 +28,7 @@ class BarangController extends Controller
                     ->orWhere('kode', 'like', '%' . request('q') . '%');
             });
         })
-            ->when(request('kode_kategory'), function ($q) {
+            ->when(request('kode_kategori'), function ($q) {
                 $q->where('kode_kategori', request('kode_kategori'));
             })
             ->whereNull('hidden')
