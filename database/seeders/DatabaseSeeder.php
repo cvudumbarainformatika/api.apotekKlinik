@@ -83,6 +83,18 @@ class DatabaseSeeder extends Seeder
         );
         $master->children()->updateOrCreate(
             [
+                'title' => 'Master Kategori',
+            ],
+            [
+                'icon' => 'layers',
+                'url' => 'admin/master/kategori',
+                'name' => 'master.kategori',
+                'view' => '/views/master/kategori',
+                'component' => 'IndexPage',
+            ]
+        );
+        $master->children()->updateOrCreate(
+            [
                 'title' => 'Master Barang',
             ],
             [
