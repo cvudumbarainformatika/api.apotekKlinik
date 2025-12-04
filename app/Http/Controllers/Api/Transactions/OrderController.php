@@ -67,7 +67,8 @@ class OrderController extends Controller
             ->with([
                 'orderRecords.master:nama,kode,satuan_k,satuan_b,isi,kandungan',
                 'supplier',
-                'penerimaan.rincian'
+                'penerimaan.rincian',
+                'kategori',
             ])
             ->orderBy('order_headers.' . $req['order_by'], $req['sort']);
         $totalCount = (clone $query)->count();
