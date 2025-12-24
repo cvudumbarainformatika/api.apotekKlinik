@@ -4,6 +4,7 @@ namespace App\Models\Transactions;
 
 use App\Models\Master\Kategori;
 use App\Models\Master\Supplier;
+use App\Models\User;
 use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,5 +32,9 @@ class OrderHeader extends Model
     public function kategori()
     {
         return $this->belongsTo(Kategori::class, 'kode_kategori', 'kode');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'kode_user', 'kode');
     }
 }

@@ -69,6 +69,7 @@ class OrderController extends Controller
                 'supplier',
                 'penerimaan.rincian',
                 'kategori',
+                'user',
             ])
             ->orderBy('order_headers.' . $req['order_by'], $req['sort']);
         $totalCount = (clone $query)->count();
@@ -167,6 +168,8 @@ class OrderController extends Controller
             $orderHeader = OrderHeader::with([
                 'orderRecords.master:nama,kode,satuan_k,satuan_b,isi,kandungan',
                 'supplier',
+                'penerimaan.rincian',
+                'user',
             ])->find($orderHeader->id);
 
             return new JsonResponse([
