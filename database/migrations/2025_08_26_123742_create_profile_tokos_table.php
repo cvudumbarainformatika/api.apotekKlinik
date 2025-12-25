@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('alamat')->nullable();
             $table->string('telepon')->nullable();
             $table->string('pemilik')->nullable();
+            $table->string('nomor_sia')->nullable();
             $table->text('header')->nullable();
             $table->text('footer')->nullable();
             $table->timestamps();
