@@ -159,6 +159,7 @@ class PenerimaanController extends Controller
             // Buat penerimaan records untuk setiap item
             $pajak_rupiah = 0;
             $diskon_rupiah = 0;
+            $diskon_rupiah_heder = 0;
             $harga_k = $validated['harga_b'] / $validated['isi'];
             // $harga_k = $request->harga / $validated['jumlah_k'];
             $harga_setelah_diskon = $harga_k;
@@ -172,7 +173,11 @@ class PenerimaanController extends Controller
                 $pajak_rupiah = $harga_setelah_diskon * ($validated['pajak'] / 100);
             }
 
-            $harga_total = $harga_k + $pajak_rupiah - $diskon_rupiah;
+            if (isset($validated['diskon_heder'])) {
+                $diskon_rupiah_heder = $harga_k * ($validated['diskon_heder'] / 100);
+            }
+
+            $harga_total = ($harga_k + $pajak_rupiah - $diskon_rupiah) - $diskon_rupiah_heder;
             $subtotal = $harga_total * $validated['jumlah_k'];
             $penerimaanrinci = Penerimaan_r::create(
                 [
