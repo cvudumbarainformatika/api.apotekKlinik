@@ -357,6 +357,18 @@ class DatabaseSeeder extends Seeder
                 'component' => 'IndexPage',
             ]
         );
+        $laporan->children()->updateOrCreate(
+            [
+                'title' => 'Laporan Expired',
+            ],
+            [
+                'icon' => 'layers',
+                'url' => 'admin/laporan/expired',
+                'name' => 'laporan.expired',
+                'view' => '/views/laporan/expired',
+                'component' => 'IndexPage',
+            ]
+        );
         //  Setting
         $setting = Menu::firstOrCreate(
             ['title' => 'Settings'],
