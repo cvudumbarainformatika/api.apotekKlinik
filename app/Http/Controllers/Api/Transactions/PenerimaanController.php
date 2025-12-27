@@ -287,8 +287,8 @@ class PenerimaanController extends Controller
             $existingHeader->update(['flag' => '1']);
 
             $user = Auth::user();
-            $requestData = $request->payload;
-            foreach ($requestData as $key => $value) {
+            $requestData = Penerimaan_r::where('nopenerimaan', $validated['nopenerimaan'])->get();
+            foreach ($requestData as $value) {
                 Stok::create(
                     [
                         'nopenerimaan' => $value['nopenerimaan'],
