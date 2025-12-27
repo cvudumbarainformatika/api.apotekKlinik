@@ -365,7 +365,7 @@ class DatabaseSeeder extends Seeder
                 'icon' => 'layers',
                 'url' => 'admin/laporan/expired',
                 'name' => 'laporan.expired',
-                'view' => '/views/laporan/expired',
+                'view' => '/views/laporan/obatexp',
                 'component' => 'IndexPage',
             ]
         );
