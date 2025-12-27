@@ -28,6 +28,7 @@ class ProfileTokoController extends Controller
             'footer' => 'nullable',
             'pajak' => 'nullable',
             'foto' => 'nullable',
+            'nomor_sia' => 'nullable',
         ], [
             'nama.required' => 'Nama wajib diisi.'
         ]);
