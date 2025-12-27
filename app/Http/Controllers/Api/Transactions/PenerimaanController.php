@@ -30,8 +30,8 @@ class PenerimaanController extends Controller
             ->when(request('q'), function ($q) {
                 $q->where(function ($query) {
                     $query->where('penerimaan_hs.nopenerimaan', 'like', '%' . request('q') . '%')
-                            ->orWhere('penerimaan_hs.noorder', 'like', '%' . request('q') . '%')
-                            ->orWhere('suppliers.nama', 'like', '%' . request('q') . '%');
+                        ->orWhere('penerimaan_hs.noorder', 'like', '%' . request('q') . '%')
+                        ->orWhere('suppliers.nama', 'like', '%' . request('q') . '%');
                 });
             })
             ->with([
@@ -76,6 +76,7 @@ class PenerimaanController extends Controller
             'diskon_rupiah' => 'nullable',
             'flag' => 'nullable',
             'hutang' => 'required',
+            'tgl_jatuh_tempo' => 'nullable',
         ], [
             'noorder.required' => 'No. Order Harus Di isi.',
             'tgl_penerimaan.required' => 'Tgl Penerimaan Harus Di isi.',
@@ -146,6 +147,7 @@ class PenerimaanController extends Controller
                     'pajak' => $validated['pajak'],
                     'kode_suplier' => $validated['kode_suplier'],
                     'hutang' => $validated['hutang'],
+                    'tgl_jatuh_tempo' => $validated['tgl_jatuh_tempo'],
                 ]
             );
             if (!$penerimaanHeader) {
@@ -163,7 +165,7 @@ class PenerimaanController extends Controller
             }
 
 
-            if($validated['jenispajak'] === 'Exclude'){
+            if ($validated['jenispajak'] === 'Exclude') {
                 $pajak_rupiah = $harga_setelah_diskon * ($validated['pajak'] / 100);
             }
 
@@ -225,7 +227,6 @@ class PenerimaanController extends Controller
 
             ], 410);
         }
-
     }
 
     public function hapus(Request $request)
@@ -282,43 +283,43 @@ class PenerimaanController extends Controller
 
         try {
             DB::beginTransaction();
-                $existingHeader->update(['flag' => '1']);
+            $existingHeader->update(['flag' => '1']);
 
-                $user = Auth::user();
-                $requestData = $request->payload;
-                foreach ($requestData as $key => $value) {
+            $user = Auth::user();
+            $requestData = $request->payload;
+            foreach ($requestData as $key => $value) {
                 Stok::create(
-                        [
-                            'nopenerimaan' => $value['nopenerimaan'],
-                            'noorder' => $value['noorder'],
-                            'kode_barang' => $value['kode_barang'],
-                            'nobatch' => $value['nobatch'],
-                            'id_penerimaan_rinci' => $value['id_penerimaan_rinci'],
-                            'isi' => $value['isi'],
-                            'satuan_b' => $value['satuan_b'],
-                            'satuan_k' => $value['satuan_k'],
-                            'jumlah_b' => $value['jumlah_b'],
-                            'jumlah_k' => $value['jumlah_k'],
-                            'harga' => $value['harga'],
-                            'pajak_rupiah' => $value['pajak_rupiah'],
-                            'diskon_persen' => $value['diskon_persen'],
-                            'diskon_rupiah' => $value['diskon_rupiah'],
-                            'harga_total' => $value['harga_total'],
-                            'subtotal' => $value['subtotal'],
-                            'tgl_exprd' => $value['tgl_exprd'],
-                            'kode_user' => $user->kode,
-                        ]
-                    );
-                }
+                    [
+                        'nopenerimaan' => $value['nopenerimaan'],
+                        'noorder' => $value['noorder'],
+                        'kode_barang' => $value['kode_barang'],
+                        'nobatch' => $value['nobatch'],
+                        'id_penerimaan_rinci' => $value['id_penerimaan_rinci'],
+                        'isi' => $value['isi'],
+                        'satuan_b' => $value['satuan_b'],
+                        'satuan_k' => $value['satuan_k'],
+                        'jumlah_b' => $value['jumlah_b'],
+                        'jumlah_k' => $value['jumlah_k'],
+                        'harga' => $value['harga'],
+                        'pajak_rupiah' => $value['pajak_rupiah'],
+                        'diskon_persen' => $value['diskon_persen'],
+                        'diskon_rupiah' => $value['diskon_rupiah'],
+                        'harga_total' => $value['harga_total'],
+                        'subtotal' => $value['subtotal'],
+                        'tgl_exprd' => $value['tgl_exprd'],
+                        'kode_user' => $user->kode,
+                    ]
+                );
+            }
 
-                $existingHeader->load([
-                    'rincian' => function ($query) {
-                        $query->with(['barang']);
-                    },
-                    'suplier',
-                ]);
+            $existingHeader->load([
+                'rincian' => function ($query) {
+                    $query->with(['barang']);
+                },
+                'suplier',
+            ]);
 
-        DB::commit();
+            DB::commit();
 
             return new JsonResponse([
                 'success' => true,
