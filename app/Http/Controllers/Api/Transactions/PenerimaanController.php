@@ -295,7 +295,7 @@ class PenerimaanController extends Controller
                         'noorder' => $value['noorder'],
                         'kode_barang' => $value['kode_barang'],
                         'nobatch' => $value['nobatch'],
-                        'id_penerimaan_rinci' => $value['id_penerimaan_rinci'],
+                        'id_penerimaan_rinci' => $value['id'],
                         'isi' => $value['isi'],
                         'satuan_b' => $value['satuan_b'],
                         'satuan_k' => $value['satuan_k'],
