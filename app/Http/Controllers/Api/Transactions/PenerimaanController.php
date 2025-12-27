@@ -52,8 +52,9 @@ class PenerimaanController extends Controller
     public function simpan(Request $request)
     {
         //return new JsonResponse($request->all());
+        $nopenerimaan = $request->nopenerimaan ?? null;
         $validated = $request->validate([
-            'nopenerimaan' => 'nullable',
+            // 'nopenerimaan' => 'nullable',
             'noorder' => 'required',
             'tgl_penerimaan' => 'required',
             'nofaktur' => 'required',
@@ -112,13 +113,13 @@ class PenerimaanController extends Controller
             ], 410);
         }
 
-        if (!$validated['nopenerimaan']) {
+        if (!$nopenerimaan) {
             DB::select('call nopenerimaan(@nomor)');
             $nomor = DB::table('counter')->select('nopenerimaan')->first();
 
             $nopenerimaan = FormatingHelper::notrans($nomor->nopenerimaan, 'PN');
         } else {
-            $nopenerimaan = $request->nopenerimaan;
+            // $nopenerimaan = $request->nopenerimaan;
 
             // Cek apakah order sudah ada dan sudah terkunci
             $existingHeader = Penerimaan_h::where('nopenerimaan', $nopenerimaan)->first();
