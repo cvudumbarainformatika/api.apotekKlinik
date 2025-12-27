@@ -148,7 +148,7 @@ class PenerimaanController extends Controller
                     'pajak' => $validated['pajak'],
                     'kode_suplier' => $validated['kode_suplier'],
                     'hutang' => $validated['hutang'],
-                    'tgl_jatuh_tempo' => $validated['tgl_jatuh_tempo'],
+                    'tgl_jatuh_tempo' => $validated['tgl_jatuh_tempo'] ?? null,
                 ]
             );
             if (!$penerimaanHeader) {

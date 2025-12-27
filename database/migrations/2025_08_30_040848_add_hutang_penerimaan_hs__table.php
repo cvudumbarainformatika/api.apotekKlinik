@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('penerimaan_hs', function (Blueprint $table) {
             $table->string('hutang')->default('')->after('flag');
-            $table->date('tgl_jatuh_tempo')->default('')->after('hutang');
+            $table->date('tgl_jatuh_tempo')->nullable()->after('hutang');
         });
     }
 
