@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::table('penerimaan_hs', function (Blueprint $table) {
             $table->string('hutang')->default('')->after('flag');
             $table->date('tgl_jatuh_tempo')->nullable()->after('hutang');
+            $table->decimal('diskon', 20)->default(0)->after('tgl_jatuh_tempo');
         });
     }
 
@@ -30,6 +31,11 @@ return new class extends Migration
         if (Schema::hasColumn('penerimaan_hs', 'tgl_jatuh_tempo')) {
             Schema::table('penerimaan_hs', function (Blueprint $table) {
                 $table->dropColumn('tgl_jatuh_tempo');
+            });
+        }
+        if (Schema::hasColumn('penerimaan_hs', 'diskon')) {
+            Schema::table('penerimaan_hs', function (Blueprint $table) {
+                $table->dropColumn('diskon');
             });
         }
     }
