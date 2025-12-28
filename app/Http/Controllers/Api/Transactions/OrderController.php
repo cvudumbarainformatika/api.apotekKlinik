@@ -91,6 +91,7 @@ class OrderController extends Controller
             'satuan_k' => 'nullable',
             'satuan_b' => 'nullable',
             'kode_kategori' => 'nullable',
+            'kode_apoteker' => 'nullable',
             'isi' => 'required',
         ], [
             'kode_supplier.required' => 'Kode Supplier Harus Di isi.',
@@ -139,6 +140,7 @@ class OrderController extends Controller
                     'kode_user' => $user->kode,
                     'kode_supplier' => $validated['kode_supplier'],
                     'kode_kategori' => $validated['kode_kategori'],
+                    'kode_apoteker' => $validated['kode_apoteker'],
                     'tgl_order' => $validated['tgl_order'] ?? now(),
                 ]
             );
@@ -169,7 +171,7 @@ class OrderController extends Controller
                 'orderRecords.master:nama,kode,satuan_k,satuan_b,isi,kandungan',
                 'supplier',
                 'penerimaan.rincian',
-                'user',
+                'apoteker',
             ])->find($orderHeader->id);
 
             return new JsonResponse([
@@ -258,6 +260,7 @@ class OrderController extends Controller
             $orderHeader = OrderHeader::with([
                 'orderRecords.master:nama,kode,satuan_k,satuan_b,isi,kandungan',
                 'supplier',
+                'apoteker',
             ])->find($existingHeader->id);
 
             return new JsonResponse([

@@ -2,6 +2,7 @@
 
 namespace App\Models\Transactions;
 
+use App\Models\Master\Apoteker;
 use App\Models\Master\Kategori;
 use App\Models\Master\Supplier;
 use App\Models\User;
@@ -36,5 +37,9 @@ class OrderHeader extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'kode_user', 'kode');
+    }
+    public function apoteker()
+    {
+        return $this->belongsTo(Apoteker::class, 'kode_apoteker', 'kode');
     }
 }

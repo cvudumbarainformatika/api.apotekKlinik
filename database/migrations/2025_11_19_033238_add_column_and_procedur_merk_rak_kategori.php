@@ -22,6 +22,9 @@ return new class extends Migration
         Schema::table('order_headers', function (Blueprint $table) {
             $table->string('kode_kategori')->nullable()->after('kode_supplier');
         });
+        Schema::table('order_headers', function (Blueprint $table) {
+            $table->string('kode_apoteker')->nullable()->after('kode_kategori');
+        });
 
         // procedurs 
 
@@ -81,6 +84,11 @@ return new class extends Migration
         if (Schema::hasColumn('order_headers', 'kode_kategori')) {
             Schema::table('order_headers', function (Blueprint $table) {
                 $table->dropColumn('kode_kategori');
+            });
+        }
+        if (Schema::hasColumn('order_headers', 'kode_apoteker')) {
+            Schema::table('order_headers', function (Blueprint $table) {
+                $table->dropColumn('kode_apoteker');
             });
         }
         DB::unprepared("DROP PROCEDURE IF EXISTS kode_kategori;");
