@@ -12,16 +12,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-
-        Schema::table('counter', function (Blueprint $table) {
-            $table->bigInteger('kode_kategori')->default(0)->after('id');
-        });
+        if (!Schema::hasColumn('counter', 'kode_kategori')) {
+            Schema::table('counter', function (Blueprint $table) {
+                $table->bigInteger('kode_kategori')->default(0)->after('id');
+            });
+        }
         Schema::table('barangs', function (Blueprint $table) {
             $table->string('kode_kategori')->nullable()->after('kode');
         });
-        Schema::table('order_headers', function (Blueprint $table) {
-            $table->string('kode_kategori')->nullable()->after('kode_supplier');
-        });
+        if (!Schema::hasColumn('order_headers', 'kode_kategori')) {
+            Schema::table('order_headers', function (Blueprint $table) {
+                $table->string('kode_kategori')->nullable()->after('kode_supplier');
+            });
+        }
         Schema::table('order_headers', function (Blueprint $table) {
             $table->string('kode_apoteker')->nullable()->after('kode_kategori');
         });
