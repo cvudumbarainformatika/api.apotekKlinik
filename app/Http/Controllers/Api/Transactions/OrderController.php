@@ -69,7 +69,7 @@ class OrderController extends Controller
                 'supplier',
                 'penerimaan.rincian',
                 'kategori',
-                'user',
+                'apoteker',
             ])
             ->orderBy('order_headers.' . $req['order_by'], $req['sort']);
         $totalCount = (clone $query)->count();
