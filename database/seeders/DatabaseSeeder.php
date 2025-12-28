@@ -177,6 +177,18 @@ class DatabaseSeeder extends Seeder
                 'component' => 'IndexPage',
             ]
         );
+        $master->children()->updateOrCreate(
+            [
+                'title' => 'Master Apoteker',
+            ],
+            [
+                'icon' => 'users',
+                'url' => 'admin/master/apoteker',
+                'name' => 'master.apoteker',
+                'view' => '/views/master/apoteker',
+                'component' => 'IndexPage',
+            ]
+        );
         //  TRANSAKSI
         $transaksi = Menu::firstOrCreate(
             ['title' => 'Transaksi'],
