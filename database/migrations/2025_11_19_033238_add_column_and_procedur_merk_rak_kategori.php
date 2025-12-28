@@ -17,17 +17,21 @@ return new class extends Migration
                 $table->bigInteger('kode_kategori')->default(0)->after('id');
             });
         }
-        Schema::table('barangs', function (Blueprint $table) {
-            $table->string('kode_kategori')->nullable()->after('kode');
-        });
+        if (!Schema::hasColumn('barangs', 'kode_kategori')) {
+            Schema::table('barangs', function (Blueprint $table) {
+                $table->string('kode_kategori')->nullable()->after('kode');
+            });
+        }
         if (!Schema::hasColumn('order_headers', 'kode_kategori')) {
             Schema::table('order_headers', function (Blueprint $table) {
                 $table->string('kode_kategori')->nullable()->after('kode_supplier');
             });
         }
-        Schema::table('order_headers', function (Blueprint $table) {
-            $table->string('kode_apoteker')->nullable()->after('kode_kategori');
-        });
+        if (!Schema::hasColumn('order_headers', 'kode_apoteker')) {
+            Schema::table('order_headers', function (Blueprint $table) {
+                $table->string('kode_apoteker')->nullable()->after('kode_kategori');
+            });
+        }
 
         // procedurs 
 
