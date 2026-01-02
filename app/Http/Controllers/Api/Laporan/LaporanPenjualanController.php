@@ -116,17 +116,12 @@ class LaporanPenjualanController extends Controller
                 'pelanggan',
                 'dokter',
             ])
-            ->whereNotNull('flag')
-            // ->orderBy($req['order_by'], $req['sort']);
+            ->whereNotNull('penjualan_h_s.flag')
+            ->when(request('q'), function ($q) {
+                $q->where('penjualan_h_s.nopenjualan', 'LIKE', '%' . request('q') . '%');
+            })
             ->orderBy("penjualan_h_s.$orderBy", $req['sort']);
         $totalCount = (clone $raw)->count();
-        $data = $raw->simplePaginate($req['per_page']);
-        // Hitung total per penjualan (dari relasi rinci)
-        // $data->getCollection()->transform(function ($item) {
-        //     $item->total_subtotal = $item->rinci->sum('subtotal');
-        //     $item->total_subtotal_retur = $item->rinci->sum('subtotal_retur');
-        //     return $item;
-        // });
 
         $grandTotals = (clone $raw)
             ->selectRaw('
@@ -134,7 +129,7 @@ class LaporanPenjualanController extends Controller
             SUM(COALESCE(retur_penjualan_rs.jumlah_k, 0) * COALESCE(retur_penjualan_rs.harga, 0)) as total_subtotal_retur,
             SUM(penjualan_r_s.jumlah_k*penjualan_r_s.harga_beli) as hpp,
             SUM(penjualan_r_s.diskon) as total_diskon
-        ')
+            ')
             ->leftJoin('penjualan_r_s', 'penjualan_r_s.nopenjualan', '=', 'penjualan_h_s.nopenjualan')
             ->leftJoin('retur_penjualan_rs', function ($q) {
                 $q->on('retur_penjualan_rs.nopenjualan', '=', 'penjualan_r_s.nopenjualan')
@@ -143,6 +138,7 @@ class LaporanPenjualanController extends Controller
             })
             ->first();
 
+        $data = $raw->simplePaginate($req['per_page']);
 
         $resp = ResponseHelper::responseGetSimplePaginate($data, $req, $totalCount);
         $resp['grand_total'] = [
