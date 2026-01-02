@@ -171,7 +171,7 @@ class PenjualanController extends Controller
             if (!$nomorPen) {
                 DB::select('call nopenjualan(@nomor)');
                 $nomor = DB::table('counter')->select('nopenjualan')->first();
-                $nopenjualan = FormatingHelper::genKodeBarang($nomor->nopenjualan, 'RF');
+                $nopenjualan = FormatingHelper::notrans($nomor->nopenjualan, 'RF');
             } else {
                 $nopenjualan = $request->nopenjualan;
                 $penj = PenjualanH::where('nopenjualan', $nopenjualan)->whereNotNull('flag')->first();

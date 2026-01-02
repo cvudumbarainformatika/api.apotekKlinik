@@ -160,7 +160,7 @@ class ReturPenjualanController extends Controller
             } else {
                 DB::select('call noretur(@nomor)');
                 $nomor = DB::table('counter')->select('noretur')->first();
-                $nomor_retur = FormatingHelper::genKodeBarang($nomor->noretur, 'RPJ');
+                $nomor_retur = FormatingHelper::notrans($nomor->noretur, 'RPJ');
             }
         } else {
             $nomor_retur = $noretur;
