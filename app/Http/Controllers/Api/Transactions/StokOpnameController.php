@@ -232,18 +232,18 @@ class StokOpnameController extends Controller
     {
 
         $today =  date('Y-m-d');
-        // $yesterday = date('Y-m-d', strtotime('-1 days'));
-        $yesterday = date('Y-m-d', strtotime('-14 days'));
+        $yesterday = date('Y-m-d', strtotime('-1 days'));
+        // $yesterday = date('Y-m-d', strtotime('-14 days'));
 
         $request = new Request([
             'tahun' => date('Y', strtotime($yesterday)),
             'bulan' => date('m', strtotime($yesterday))
         ]);
-        // if (Carbon::now()->day === 1) {
-        $instance = new self;
-        $data = $instance->simpan($request);
-        return $data;
-        // }
+        if (Carbon::now()->day === 1) {
+            $instance = new self;
+            $data = $instance->simpan($request);
+            return $data;
+        }
 
         return new JsonResponse([
             'message' => 'Stok opname farmasi dapat dilakukan di hari terakhir tiap bulan',
