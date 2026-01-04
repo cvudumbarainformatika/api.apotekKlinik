@@ -281,6 +281,7 @@ class PenjualanController extends Controller
             // update data
             $data->update([
                 'cara_bayar' => $validated['cara_bayar'],
+                'diskon' => $validated['diskon'],
                 'diskon_rp' => $diskonRp,
                 'jumlah_bayar' => $jumlahBayar,
                 'kembali' => $kembali,
