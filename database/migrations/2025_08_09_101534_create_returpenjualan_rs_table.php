@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->decimal('jumlah_k', 12, 2)->nullable()->default(null);
             $table->string('satuan_k')->nullable()->default(null);
             $table->decimal('harga', 12, 2)->nullable()->default(null);
+            $table->decimal('subtotal', 12, 2)->nullable()->default(null);
             $table->string('kode_user')->nullable()->default(null);
             $table->bigInteger('returpenjualan_h_id');
             $table->string('returpenjualan_h_noretur');

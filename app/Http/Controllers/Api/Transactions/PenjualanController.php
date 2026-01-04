@@ -143,6 +143,7 @@ class PenjualanController extends Controller
             'satuan_b' => 'nullable',
             'isi' => 'required',
             'diskon' => 'nullable',
+            // 'diskon_header' => 'nullable',
             'harga_jual' => 'required', // ini dari master
             'harga_beli' => 'required', // ini dari master
             'hpp' => 'required', // ini di taruh di master, hasil query dari 5 harga terakhir
@@ -185,6 +186,7 @@ class PenjualanController extends Controller
                 'tgl_penjualan' => $validated['tgl_penjualan'] ?? Carbon::now()->format('Y-m-d H:i:s'),
                 'kode_pelanggan' => $validated['kode_pelanggan'],
                 'kode_dokter' => $validated['kode_dokter'],
+                // 'diskon' => $validated['diskon_header'],
                 'kode_user' => $user->kode,
                 // 'cara_bayar' => '',
             ]);
@@ -258,15 +260,16 @@ class PenjualanController extends Controller
             if ($data->flag == 1) throw new \Exception('Transaksi penjualan ini sudah dibayar.');
 
             // hitung Subtotal
-            $subtotal = PenjualanR::where('nopenjualan', $data->nopenjualan)->sum('subtotal');
-            $diskon = PenjualanR::where('nopenjualan', $data->nopenjualan)->sum('diskon');
+            $subtotal = (float)PenjualanR::where('nopenjualan', $data->nopenjualan)->sum('subtotal');
+            $diskonPersen = (float) $validated['diskon']; // misal 5, 10, 15
+            $diskonRp = ($diskonPersen / 100) * $subtotal;
 
             $kembali = $validated['kembali'] ?? 0;
             $jumlahBayar = $validated['jumlah_bayar'] ?? 0;
             // tentkan jumlah pembayran jika ada diskon dan tidak
             // if ($diskon > 0) $nilaiBayar = (int)$subtotal - (int)$diskon;
             // else $nilaiBayar = (int)$subtotal;
-            $nilaiBayar = (int)$subtotal;
+            $nilaiBayar = $subtotal - $diskonRp;
             // validasi jumlah pembayaran
             if ((int)$jumlahBayar < (int)$nilaiBayar) {
                 throw new Exception('Jumlah Pembayaran kurang, minimal ' . $nilaiBayar);
@@ -278,7 +281,7 @@ class PenjualanController extends Controller
             // update data
             $data->update([
                 'cara_bayar' => $validated['cara_bayar'],
-                'diskon' => $diskon,
+                'diskon_rp' => $diskonRp,
                 'jumlah_bayar' => $jumlahBayar,
                 'kembali' => $kembali,
                 'kode_user' => $user->kode,

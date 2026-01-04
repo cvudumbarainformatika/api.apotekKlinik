@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('cara_bayar')->dafault('tunai');
             $table->string('flag')->nullable();
             $table->decimal('diskon', 20, 0)->default(0);
+            $table->decimal('diskon_rp', 20, 0)->default(0);
             $table->decimal('jumlah_bayar', 20, 0)->default(0);
             $table->decimal('kembali', 20, 0)->default(0);
             $table->timestamps();

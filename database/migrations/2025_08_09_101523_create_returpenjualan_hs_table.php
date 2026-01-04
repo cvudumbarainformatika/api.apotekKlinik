@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->string('kode_supplier')->nullable()->default(null);
             $table->string('kode_user')->nullable()->default(null);
             $table->string('flag')->nullable()->default(null);
+            $table->decimal('diskon')->default(0);
+            $table->decimal('diskon_rp')->default(0);
             $table->timestamps();
         });
     }

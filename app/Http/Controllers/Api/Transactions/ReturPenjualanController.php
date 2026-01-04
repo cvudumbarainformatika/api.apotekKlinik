@@ -190,7 +190,7 @@ class ReturPenjualanController extends Controller
             if (!$ReturPenjualanHeader) {
                 throw new \Exception('Retur Penjualan Header Gagal Disimpan.');
             }
-
+            $subtotal = ($validated['jumlah_k'] * $validated['harga']) - ($validated['diskon'] ?? 0);
             $ReturPenjualanRinci = ReturPenjualan_r::updateOrCreate(
                 [
                     'noretur' => $nomor_retur,
@@ -208,6 +208,7 @@ class ReturPenjualanController extends Controller
                     'nopenerimaan' => $validated['nopenerimaan'],
                     'id_stok' => $validated['id_stok'],
                     'diskon' => $validated['diskon'] ?? 0,
+                    'subtotal' => $subtotal,
                     'kode_user' => $user->kode
                 ]
             );
@@ -305,8 +306,14 @@ class ReturPenjualanController extends Controller
 
                 $stok->update(['jumlah_k' => $jumlahStok]);
             }
+            $subtotal = (float)ReturPenjualan_r::where('noretur', $validated['noretur'])->sum('subtotal');
+            $diskonPersen = (float) $headerPenjualan->diskon; // misal 5, 10, 15
+            $diskonRp = ($diskonPersen / 100) * $subtotal;
             // Update header
-            $returHeader->update(['flag' => '1']); // Lock Table
+            $returHeader->update([
+                'diskon_rp' => $diskonRp,
+                'flag' => '1'
+            ]); // Lock Table
             // update header penjualan
             $headerPenjualan->update(['flag' => '2']); // ganti flag biar ga bisa di retur lagi
 
