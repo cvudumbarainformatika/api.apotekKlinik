@@ -89,17 +89,20 @@ class OrderController extends Controller
             'kode_supplier' => 'required',
             'kode_barang' => 'required',
             'jumlah_pesan' => 'required',
-            'satuan_k' => 'nullable',
+            'satuan_k' => 'required',
             'satuan_b' => 'nullable',
             'kode_kategori' => 'nullable',
             'kode_apoteker' => 'nullable',
-            'isi' => 'required',
+            'isi' => 'required|numeric|gt:0',
         ], [
             'kode_supplier.required' => 'Kode Supplier Harus Di isi.',
             'jumlah_pesan.required' => 'Jumlah Pesanan Harus Di isi.',
             'items.required' => 'Minimal satu barang harus dipilih.',
             'kode_barang.required' => 'Kode Barang Harus Di isi.',
-            'isi.required' => 'Isi per Satuan Besar Barang Harus Di isi.',
+            'isi.required' => 'Isi per Satuan Besar Barang Harus Diisi.',
+            'satuan_k.required' => 'Satuan Kecil Barang Harus Diisi.',
+            'isi.numeric'  => 'Isi per Satuan Besar harus berupa angka.',
+            'isi.gt'       => 'Isi per Satuan Besar harus lebih besar dari 0.',
         ]);
         $user = Auth::user();
         if (!$user) {
