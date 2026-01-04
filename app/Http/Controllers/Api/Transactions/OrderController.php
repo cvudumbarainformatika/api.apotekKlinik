@@ -90,7 +90,7 @@ class OrderController extends Controller
             'kode_barang' => 'required',
             'jumlah_pesan' => 'required',
             'satuan_k' => 'required',
-            'satuan_b' => 'nullable',
+            'satuan_b' => 'required',
             'kode_kategori' => 'nullable',
             'kode_apoteker' => 'nullable',
             'isi' => 'required|numeric|gt:0',
@@ -101,6 +101,7 @@ class OrderController extends Controller
             'kode_barang.required' => 'Kode Barang Harus Di isi.',
             'isi.required' => 'Isi per Satuan Besar Barang Harus Diisi.',
             'satuan_k.required' => 'Satuan Kecil Barang Harus Diisi.',
+            'satuan_b.required' => 'Satuan Besar Barang Harus Diisi.',
             'isi.numeric'  => 'Isi per Satuan Besar harus berupa angka.',
             'isi.gt'       => 'Isi per Satuan Besar harus lebih besar dari 0.',
         ]);
