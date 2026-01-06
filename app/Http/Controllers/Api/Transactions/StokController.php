@@ -237,6 +237,7 @@ class StokController extends Controller
                         'penjualan_r_s.kode_barang',
                         'penjualan_r_s.jumlah_k',
                         'penjualan_r_s.harga_beli',
+                        'penjualan_r_s.harga_jual',
                         'penjualan_h_s.tgl_penjualan',
                         'penjualan_h_s.nopenjualan',
                         'penjualan_h_s.kode_pelanggan',
@@ -251,6 +252,7 @@ class StokController extends Controller
                         'retur_penjualan_rs.kode_barang',
                         'retur_penjualan_rs.jumlah_k',
                         'retur_penjualan_rs.harga_beli',
+                        'retur_penjualan_rs.harga as harga_jual',
                         'retur_penjualan_hs.tgl_retur',
                         'retur_penjualan_hs.noretur',
                     )
