@@ -9,6 +9,7 @@ use App\Models\Transactions\OrderHeader;
 use App\Models\Transactions\Penerimaan_h;
 use App\Models\Transactions\Penerimaan_r;
 use App\Models\Transactions\Stok;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -334,7 +335,11 @@ class PenerimaanController extends Controller
 
         try {
             DB::beginTransaction();
-            $existingHeader->update(['flag' => '1']);
+            $existingHeader->update([
+                'flag' => '1',
+                'tgl_penerimaan' => Carbon::now()->format('Y-m-d H:i:s')
+            ]);
+
 
             $user = Auth::user();
             $requestData = Penerimaan_r::where('nopenerimaan', $validated['nopenerimaan'])->get();
