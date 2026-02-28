@@ -29,10 +29,10 @@ class LaporanExpiredController extends Controller
                     ->orWhere('kode', 'like', '%' . request('q') . '%');
             })
             ->where('jumlah_k', '>', 0)
-            ->when($req['from'] && $req['to'], function ($q) use ($req) {
-                $q->whereDate('tgl_exprd', '>=', $req['from'])
-                    ->whereDate('tgl_exprd', '<', $req['to']);
-            })
+            // ->when($req['from'] && $req['to'], function ($q) use ($req) {
+            //     $q->whereDate('tgl_exprd', '>=', $req['from'])
+            //         ->whereDate('tgl_exprd', '<', $req['to']);
+            // })
             ->select(
                 'barangs.kode',
                 'barangs.nama',
@@ -43,7 +43,8 @@ class LaporanExpiredController extends Controller
                 'stoks.tgl_exprd',
                 'stoks.harga_total as harga_beli',
             )
-            ->orderBy('tgl_exprd', $req['sort']);
+            // ->orderBy('tgl_exprd', $req['sort']);
+            ->orderBy('tgl_exprd', 'ASC');
         $totalCount = (clone $raw)->count();
         $data = $raw->simplePaginate($req['per_page']);
 
