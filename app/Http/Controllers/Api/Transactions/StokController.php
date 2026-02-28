@@ -18,8 +18,9 @@ class StokController extends Controller
     public function index()
     {
         $req = [
-            'order_by' => request('order_by', 'created_at'),
-            'sort' => request('sort', 'asc'),
+            // 'order_by' => request('order_by', 'created_at'),
+            // 'order_by' => request('order_by', 'created_at'),
+            // 'sort' => request('sort', 'asc'),
             'page' => request('page', 1),
             'per_page' => request('per_page', 10),
         ];
@@ -40,7 +41,7 @@ class StokController extends Controller
                 $q->where('jumlah_k', '>', 0);
             })
             ->select('stoks.*')
-            ->orderBy($req['order_by'], $req['sort']);
+            ->orderBy('barangs.nama', 'ASC');
         $totalCount = (clone $query)->count();
         $data = $query->simplePaginate($req['per_page']);
 
