@@ -44,7 +44,7 @@ class LaporanExpiredController extends Controller
                 'stoks.harga_total as harga_beli',
             )
             // ->orderBy('tgl_exprd', $req['sort']);
-            ->orderBy('tgl_exprd', 'ASC');
+            ->orderBy('nama', 'ASC');
         $totalCount = (clone $raw)->count();
         $data = $raw->simplePaginate($req['per_page']);
 
