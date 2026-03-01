@@ -24,6 +24,8 @@ class LaporanExpiredController extends Controller
         ];
         $raw = Stok::query();
         $raw->leftJoin('barangs', 'barangs.kode', '=', 'stoks.kode_barang')
+            ->leftJoin('penerimaan_hs', 'penerimaan_hs.nopenerimaan', '=', 'stoks.nopenerimaan')
+            ->leftJoin('suppliers', 'suppliers.kode', '=', 'penerimaan_hs.kode_suplier')
             ->when(request('q'), function ($q) {
                 $q->where('nama', 'like', '%' . request('q') . '%')
                     ->orWhere('kode', 'like', '%' . request('q') . '%');
@@ -41,7 +43,10 @@ class LaporanExpiredController extends Controller
                 'stoks.jumlah_k',
                 'stoks.isi',
                 'stoks.tgl_exprd',
+                'stoks.nopenerimaan',
                 'stoks.harga_total as harga_beli',
+                'penerimaan_hs.kode_suplier',
+                'suppliers.nama as nama_supplier',
             )
             // ->orderBy('tgl_exprd', $req['sort']);
             ->orderBy('stoks.tgl_exprd', 'ASC');
