@@ -17,7 +17,7 @@ services:
         volumes:
             - ./:/var/www
         networks:
-            - harrynet
+            - apkliniknet
         depends_on:
             # - db
             - redis
@@ -38,7 +38,7 @@ services:
     #         - mysql_data:/var/lib/mysql
     #         - ./docker-compose/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     #     networks:
-    #         - harrynet
+    #         - apkliniknet
     #     healthcheck:
     #         test:
     #             [
@@ -63,7 +63,7 @@ services:
             - ./:/var/www
             - ./docker-compose/nginx:/etc/nginx/conf.d
         networks:
-            - harrynet
+            - apkliniknet
         healthcheck:
             test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
             interval: 10s
@@ -80,7 +80,7 @@ services:
         ports:
             - "26757:6379"
         networks:
-            - harrynet
+            - apkliniknet
 
     # scheduler:
     #     image: apotik-klinik-app # Pakai image dari app
@@ -95,12 +95,12 @@ services:
     #     env_file:
     #         - .env
     #     networks:
-    #         - harrynet
+    #         - apkliniknet
 
 volumes:
     mysql_data:
     redis_data:
 
 networks:
-    harrynet:
+    apkliniknet:
         driver: bridge
