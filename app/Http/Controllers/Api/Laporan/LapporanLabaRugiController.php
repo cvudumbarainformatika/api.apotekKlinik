@@ -73,12 +73,13 @@ class LapporanLabaRugiController extends Controller
         //     ])
         //     ->whereNotNull('flag')
         //     ->get();
-        $totalPenjualan = (int)$penjualan->sum('rinci_sum_subtotal');
+        $totalDiskonPenjualan = (int)$penjualan->sum('diskon_rp');
+        $totalPenjualan = (int)$penjualan->sum('rinci_sum_subtotal') - $totalDiskonPenjualan;
         $hppPenjualan = (int)$penjualan->sum('rinci_sum_jumlah_k_harga_beli');
         $totalReturPenjualan = (int)$returPenjualan->sum('retur_penjualan_r_sum_jumlah_k_harga');
         $hppReturPenjualan = (int)$returPenjualan->sum('retur_penjualan_r_sum_jumlah_k_harga_beli');
         $totalbeban = (int)$beban->sum('subtotal');
-        $totalPendapatanLain = (int)$pendapatanlain->sum('subtotal');;
+        $totalPendapatanLain = (int)$pendapatanlain->sum('subtotal');
         $penjualanBersih = $totalPenjualan - $totalReturPenjualan;
         $hppPenjualanBersih = $hppPenjualan - $hppReturPenjualan;
         $labaKotor = $penjualanBersih - $hppPenjualanBersih;
